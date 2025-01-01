@@ -4,16 +4,23 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
-import bcrypt
 from jose import JWTError, jwt
 from models import User, Computer
 from database import SessionLocal, engine
+import bcrypt
+import os
+
+# Получаем путь к директории, в которой находится данный скрипт
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# Статические файлы относительно директории проекта
+static_files_path = os.path.join(BASE_DIR, "statics")
 
 # Инициализация FastAPI приложения
 app = FastAPI()
 
-# Монтируем директорию с статическими файлами
-app.mount("/statics", StaticFiles(directory="/home/nzxt/rep/parental_control/parental_control_server/web_monitor/statics"), name="statics")
+# Монтируем директорию с статическими файлами с использованием относительного пути
+app.mount("/statics", StaticFiles(directory=static_files_path), name="statics")
 
 # Конфигурация JWT
 SECRET_KEY = "your_secret_key"
