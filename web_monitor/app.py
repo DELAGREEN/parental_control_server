@@ -127,6 +127,12 @@ async def dashboard(request: Request, current_user: User = Depends(get_current_u
         "current_user": current_user  # Передаем текущего пользователя
     })
 
+@app.get("/shutdown", response_class=HTMLResponse)
+async def shutdown(request: Request, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    # Логика выключения компьютера
+    print("shutdown process")
+    return RedirectResponse("/dashboard", status_code=303)
+
 @app.post("/logout")
 async def logout(response: RedirectResponse):
     response.delete_cookie("Authorization")  # Удаляем cookie с токеном
