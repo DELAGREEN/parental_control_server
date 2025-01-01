@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Дашборд</title>
+    <!-- Подключение внешнего CSS -->
+    <link rel="stylesheet" type="text/css" href="/statics/style.css">
+</head>
+<body>
+<h2>Дашборд</h2>
+
+<p>Добро пожаловать, {{ current_user.username }}!</p>
+
+<h3>Запущенные процессы:</h3>
+<ul>
+    {% for process in processes %}
+        <li>{{ process }}</li>
+    {% endfor %}
+</ul>
+
+<h3>Подключенные компьютеры:</h3>
+<ul>
+    {% for computer in computers %}
+        <li>{{ computer.name }} - Status: {{ computer.status }}</li>
+    {% endfor %}
+</ul>
+
+<form method="post" action="/shutdown">
+    <button type="submit">Выключить компьютер</button>
+</form>
+
+<!-- Форма для выхода из системы -->
+<form method="post" action="/logout">
+    <button type="submit">Выйти</button>
+</form>
+
+</body>
+</html>
