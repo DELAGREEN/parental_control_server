@@ -8,6 +8,11 @@
 </head>
 <body>
     <h2>Регистрация</h2>
+    {% if error_message %}
+    <div style="color: red; font-weight: bold;">
+        {{ error_message }}
+    </div>
+    {% endif %}
     <form method="post">
         <input type="text" name="username" placeholder="Имя пользователя" required>
         <input type="password" name="password" placeholder="Пароль" required>

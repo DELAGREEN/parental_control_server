@@ -9,6 +9,7 @@ from models import User, Computer
 from database import SessionLocal, engine
 import bcrypt
 import os
+import re
 
 # Получаем путь к директории, в которой находится данный скрипт
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -51,6 +52,25 @@ def get_password_hash(password):
     hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
     return hashed.decode('utf-8')  # Преобразуем bytes в строку перед сохранением
 
+def is_password_strong(password: str) -> bool:
+    # Проверка на минимальную длину
+    if len(password) < 8:
+        return False
+    
+    # Проверка на наличие заглавной буквы
+    if not re.search(r'[A-Z]', password):
+        return False
+    
+    # Проверка на наличие цифры
+    if not re.search(r'\d', password):
+        return False
+    
+    # Проверка на наличие специального символа
+    if not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
+        return False
+    
+    return True
+
 def create_access_token(data: dict):
     return jwt.encode(data, SECRET_KEY, algorithm=ALGORITHM)
 
@@ -87,14 +107,38 @@ async def home(request: Request):
 async def register_page(request: Request):
     return templates.TemplateResponse("register.html", {"request": request})
 
+#@app.post("/register", response_class=HTMLResponse)
+#async def register(request: Request, username: str = Form(...), password: str = Form(...), db: Session = Depends(get_db)):
+#    db_user = get_user_by_username(db, username)
+#    if db_user:
+#        raise HTTPException(status_code=400, detail="Username already registered")
+#    
+#    hashed_password = get_password_hash(password)
+#    new_user = User(username=username, password=hashed_password)
+#    db.add(new_user)
+#    db.commit()
+#    db.refresh(new_user)
+#    
+#    return RedirectResponse("/login", status_code=303)
+
 @app.post("/register", response_class=HTMLResponse)
 async def register(request: Request, username: str = Form(...), password: str = Form(...), db: Session = Depends(get_db)):
+    # Проверка, существует ли уже пользователь с таким именем
     db_user = get_user_by_username(db, username)
     if db_user:
-        raise HTTPException(status_code=400, detail="Username already registered")
+        return templates.TemplateResponse("register.html", {"request": request, "error_message": "Username already registered"})
     
+    # Проверка на сложность пароля
+    if not is_password_strong(password):
+        return templates.TemplateResponse("register.html", {
+            "request": request,
+            "error_message": "Пароль слишком слабый. Он должен содержать не менее 8 символов, включая одну заглавную букву, одну цифру и один специальный символ."
+        })
+    
+    # Хэшируем пароль
     hashed_password = get_password_hash(password)
     new_user = User(username=username, password=hashed_password)
+    
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
