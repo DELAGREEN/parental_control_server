@@ -172,7 +172,7 @@ async def dashboard(request: Request, current_user: User = Depends(get_current_u
     })
 
 @app.get("/shutdown", response_class=HTMLResponse)
-async def shutdown(request: Request, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+async def shutdown():
     # Логика выключения компьютера
     print("shutdown process")
     return RedirectResponse("/dashboard", status_code=303)
