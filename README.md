@@ -6,11 +6,11 @@
 
 Запуск проекта на fast api:
 - cd web_monitor 
-- uvicorn app:app --reload --host 0.0.0.0 --port 8001
+- uvicorn app:app --reload --host 0.0.0.0 --port 8000
 - uvicorn app:app --reload
 - ИЛИ
 - fastapi dev app.py
- 
+
 Очистить БД
 - docker volume
 - docker volume rm
