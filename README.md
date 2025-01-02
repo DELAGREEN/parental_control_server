@@ -15,7 +15,7 @@
 <br>
 `uvicorn app:app --reload`
 <br>
-ИЛИ
+или
 <br>
 `fastapi dev app.py`
 
