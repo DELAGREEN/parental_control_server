@@ -11,6 +11,12 @@
 
 <p>Добро пожаловать, {{ current_user.username }}!</p>
 
+<h3>Добавить компьютер:</h3>
+<form method="post" action="/link_computer">
+    <input type="text" name="code" placeholder="Код компьютера" required>
+    <button type="submit">Добавить</button>
+</form>
+
 <h3>Запущенные процессы:</h3>
 <ul>
     {% for process in processes %}
@@ -24,6 +30,12 @@
         <li>{{ computer.name }} - Status: {{ computer.status }}</li>
     {% endfor %}
 </ul>
+
+<h3>Блокировка процессов:</h3>
+<form method="post" action="/block_process">
+    <input type="text" name="process_name" placeholder="Имя процесса" required>
+    <button type="submit">Заблокировать</button>
+</form>
 
 <form method="get" action="/shutdown">
     <button type="submit">Выключить компьютер</button>
