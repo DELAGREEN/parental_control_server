@@ -75,7 +75,7 @@ def create_access_token(data: dict):
     return jwt.encode(data, SECRET_KEY, algorithm=ALGORITHM)
 
 def get_user_by_username(db: Session, username: str):
-    return db.query(User).filter(User.username == username).first()
+    return db.query(User).filter(User.username == username.lower()).first()
 
 def get_current_user(request: Request, db: Session = Depends(get_db)):
     token = request.cookies.get("Authorization")
@@ -126,7 +126,10 @@ async def register(request: Request, username: str = Form(...), password: str = 
     # Проверка, существует ли уже пользователь с таким именем
     db_user = get_user_by_username(db, username)
     if db_user:
-        return templates.TemplateResponse("register.html", {"request": request, "error_message": "Username already registered"})
+        return templates.TemplateResponse("register.html", {
+            "request": request, 
+            "error_message": "Имя пользователя уже зарегистрированно"
+        })
     
     # Проверка на сложность пароля
     if not is_password_strong(password):
@@ -150,11 +153,15 @@ async def login_page(request: Request):
     return templates.TemplateResponse("login.html", {"request": request})
 
 @app.post("/login")
-async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+async def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = get_user_by_username(db, form_data.username)
     if not user or not verify_password(form_data.password, user.password):
-        raise HTTPException(status_code=401, detail="Invalid credentials")
-    
+        #raise HTTPException(status_code=401, detail="Неверные учетные данные")
+        return templates.TemplateResponse("login.html", {
+            "request": request,
+            "error_message": "Неверный логин или пароль."
+        })
+
     access_token = create_access_token(data={"sub": user.username})
     response = RedirectResponse("/dashboard", status_code=303)
     response.set_cookie(key="Authorization", value=f"Bearer {access_token}", httponly=True)

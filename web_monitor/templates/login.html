@@ -8,6 +8,12 @@
 </head>
 <body>
     <h2>Вход</h2>
+    {% if error_message %}
+    <div style="color: red; font-weight: bold;">
+        {{ error_message }}
+        <p></p>
+    </div>
+    {% endif %}
     <form method="post">
         <fieldset>
             <input type="text" id="username" name="username" placeholder="Имя пользователя" required>
@@ -17,8 +23,7 @@
             <button type="submit">Войти</button>
         </fieldset>
     </form>
-    <p></p>
-    Нет аккаунта? 
-    <a href="/register">Зарегистрируйтесь</a>
+    <p>Нет аккаунта? 
+    <a href="/register">Зарегистрируйтесь</a></p>
 </body>
 </html>
