@@ -3,47 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <title>Дашборд</title>
-    <!-- Подключение внешнего CSS -->
     <link rel="stylesheet" type="text/css" href="/statics/style.css">
 </head>
 <body>
-<h2>Дашборд</h2>
+    <h2>Дашборд</h2>
+    
+    <p>Добро пожаловать, {{ current_user.username }}!</p>
+    
+    {% if db_error %}
+    <div style="color: red; font-weight: bold;">
+        {{ db_error }}
+    </div>
+    {% endif %}
+    
+    <h3>Запущенные процессы:</h3>
+    <ul>
+        {% for process in processes %}
+            <li>
+                {{ process }}
+                <form method="post" action="/terminate_process" style="display: inline;">
+                    <input type="hidden" name="process_name" value="{{ process }}">
+                    <p></p>
+                    <button type="submit">Завершить</button>
+                </form>
+                <form method="post" action="/block_process" style="display: inline;">
+                    <input type="hidden" name="process_name" value="{{ process }}">
+                    <button type="submit">Заблокировать</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
 
-<p>Добро пожаловать, {{ current_user.username }}!</p>
+    <h3>Подключенные компьютеры:</h3>
+    <ul>
+        {% for computer in computers %}
+            <li>{{ computer.name }} - Status: {{ computer.status }}</li>
+        {% endfor %}
+    </ul>
 
-<h3>Добавить компьютер:</h3>
-<form method="post" action="/link_computer">
-    <input type="text" name="code" placeholder="Код компьютера" required>
-    <button type="submit">Добавить</button>
-</form>
+        <form method="post" action="/link_computer">
+        <h3>Привязать компьютер:</h3>
+        <input type="text" name="code" placeholder="Код компьютера" required>
+        <button type="submit">Привязать</button>
+    </form>
 
-<h3>Запущенные процессы:</h3>
-<ul>
-    {% for process in processes %}
-        <li>{{ process }}</li>
-    {% endfor %}
-</ul>
-
-<h3>Подключенные компьютеры:</h3>
-<ul>
-    {% for computer in computers %}
-        <li>{{ computer.name }} - Status: {{ computer.status }}</li>
-    {% endfor %}
-</ul>
-
-<h3>Блокировка процессов:</h3>
-<form method="post" action="/block_process">
-    <input type="text" name="process_name" placeholder="Имя процесса" required>
-    <button type="submit">Заблокировать</button>
-</form>
-
-<form method="get" action="/shutdown">
-    <button type="submit">Выключить компьютер</button>
-</form>
-
-<form method="post" action="/logout">
-    <button type="submit">Выйти</button>
-</form>
-
+    <form method="get" action="/shutdown">
+        <button type="submit">Выключить компьютер</button>
+    </form>
+    
+    <form method="post" action="/logout">
+        <button type="submit">Выйти</button>
+    </form>
 </body>
 </html>

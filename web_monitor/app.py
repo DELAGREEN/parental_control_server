@@ -92,7 +92,7 @@ async def register(request: Request, username: str = Form(...), password: str = 
     if db_user:
         return templates.TemplateResponse("register.html", {
             "request": request,
-            "error_message": "Имя пользователя уже зарегистрировано."
+            "error_message": "Пользователь уже зарегистрирован."
         })
 
     hashed_password = get_password_hash(password)
@@ -147,6 +147,12 @@ async def dashboard(request: Request, current_user: User = Depends(get_current_u
 async def logout(response: RedirectResponse):
     response.delete_cookie("Authorization")
     return RedirectResponse("/login", status_code=303)
+
+@app.get("/shutdown", response_class=HTMLResponse)
+async def shutdown():
+    # Логика выключения компьютера
+    print("shutdown process")
+    return RedirectResponse("/dashboard", status_code=303)
 
 @app.post("/link_computer")
 async def link_computer(code: str = Form(...), current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
