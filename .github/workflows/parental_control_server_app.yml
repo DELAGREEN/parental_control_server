@@ -5,7 +5,7 @@ name: parental control server
 
 on:
   push:
-    workflow_dispatch:
+    workflow_dispatch:    - удали строку если нужно будет запустить и раскоментируй ниже
 #    branches: [ "main" ]
 #  pull_request:
 #    branches: [ "main" ]
